@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hair Removal</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Upload an Image for Hair Removal</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*" required>
+        <button type="submit">Upload</button>
+    </form>
+    <div id="result">
+        <h2>Processed Image:</h2>
+        <img id="processed-image" src="" alt="Processed Image">
+    </div>
+    <script>
+        const form = document.getElementById('upload-form');
+        const resultDiv = document.getElementById('result');
+        const processedImage = document.getElementById('processed-image');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const response = await fetch('/remove_hair', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                processedImage.src = data.result_path;
+                resultDiv.style.display = 'block';
+            } else {
+                const error = await response.json();
+                alert(error.detail);
+            }
+        });
+    </script>
+</body>
+</html>
